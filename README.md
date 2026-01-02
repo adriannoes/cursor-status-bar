@@ -17,208 +17,153 @@ A native macOS application that displays Cursor usage statistics directly in the
 
 - macOS 13.0 (Ventura) or higher
 - Cursor installed and logged in
+- Xcode 15.0+ (for building from source)
 
-## 📥 Quick Installation (Recommended)
+## 📥 Quick Installation
 
 ### Download via GitHub Releases
 
-1. **Download the latest version:**
-   - Visit [Releases](https://github.com/adriannoes/cursor-status-bar/releases)
-   - Download the `CursorMenuBarApp-X.X.X.zip` file
-
-2. **Install:**
+1. Download the latest version from [Releases](https://github.com/adriannoes/cursor-status-bar/releases)
+2. Extract the zip and run:
    ```bash
-   # Extract the zip
    unzip CursorMenuBarApp-X.X.X.zip
-   
-   # Move to Applications (optional)
-   mv CursorMenuBarApp.app /Applications/
-   
-   # Run
    open CursorMenuBarApp.app
    ```
+3. On first run, allow file access in System Settings > Privacy & Security > Files and Folders
 
-3. **First run:**
-   - macOS may request permission to access files
-   - Go to System Settings > Privacy & Security > Files and Folders
-   - Allow access for the application
+## 🔨 Build from Source
 
-## 🔨 Build from Source Code
+### Using Xcode (Recommended)
 
-### Build Prerequisites
-
-- Xcode 15.0 or higher
-- Swift 5.9 or higher
-
-### Option 1: Using Xcode
-
-1. Clone the repository:
 ```bash
 git clone https://github.com/adriannoes/cursor-status-bar.git
-cd cursor-status-bar
-```
-
-2. Open the project in Xcode:
-```bash
-cd CursorMenuBarApp
+cd cursor-status-bar/CursorMenuBarApp
 open Package.swift
 ```
 
-3. Build and run:
-- Select the `CursorMenuBarApp` scheme in Xcode
-- Press `Cmd+R` to build and run
+Then in Xcode: Select `CursorMenuBarApp` scheme → Press `Cmd+R` to build and run.
 
-### Option 2: Command Line Build
+### Using Command Line
 
 ```bash
-# Clone the repository
 git clone https://github.com/adriannoes/cursor-status-bar.git
 cd cursor-status-bar/CursorMenuBarApp
-
-# Resolve dependencies
 swift package resolve
-
-# Build
 swift build -c release
-
-# Run
 .build/release/CursorMenuBarApp
 ```
 
-### Option 3: Create App Bundle for Distribution
-
+**Note:** If you encounter SDK/compiler version errors, use Xcode instead or run:
 ```bash
-# Create the app bundle (run from project root)
-./Scripts/package_app.sh 0.1.0 release
-
-# The app will be created at: CursorMenuBarApp/CursorMenuBarApp.app
-# To create a zip:
-zip -r CursorMenuBarApp-0.1.0.zip CursorMenuBarApp/CursorMenuBarApp.app
+xcodebuild -resolvePackageDependencies
+sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 ```
 
 ## How It Works
 
-The application:
-
-1. **Reads the authentication token** from Cursor's SQLite database located at:
+1. **Reads authentication token** from Cursor's SQLite database:
    ```
    ~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
    ```
 
-2. **Makes requests to Cursor's API** to get:
-   - Current premium requests and limit
-   - Usage distribution by model (GPT-4, GPT-4-32k, GPT-3.5-turbo)
+2. **Fetches usage data** from Cursor's API:
+   - Premium requests (current/limit)
+   - Model distribution (GPT-4, GPT-4-32k, GPT-3.5-turbo)
    - Billing cycle information
 
-3. **Displays the information** in a menu in the macOS menu bar
+3. **Displays metrics** in the macOS menu bar
+
+## Project Structure
+
+```
+cursor-status-bar/
+├── CursorMenuBarApp/          # Swift Package
+│   ├── Sources/
+│   │   └── CursorMenuBarApp/
+│   │       ├── Models/        # Data models (PremiumUsage, ModelUsage, CursorMetrics)
+│   │       ├── Services/      # TokenProvider, API client, MetricsRepository
+│   │       ├── Views/         # MenuBarView (SwiftUI)
+│   │       └── CursorStatsApp.swift
+│   ├── Tests/                 # Unit tests
+│   └── Package.swift
+└── Scripts/                   # Build and distribution scripts
+```
+
+**Key Components:**
+- `CursorTokenProvider`: Reads token from SQLite database
+- `CursorAPI`: HTTP client for Cursor API endpoints
+- `MetricsRepository`: Aggregates and manages metrics
+- `MenuBarView`: SwiftUI interface
 
 ## Configuration
 
 ### Custom Database Path
 
-If Cursor is installed in a non-standard location, you can configure a custom path programmatically:
-
+If Cursor is in a non-standard location:
 ```swift
 CursorTokenProvider.shared.setCustomDatabasePath("/custom/path/state.vscdb")
 ```
 
-## Project Structure
+### Refresh Interval
 
-```
-CursorMenuBarApp/
-├── Sources/
-│   └── CursorMenuBarApp/
-│       ├── Models/
-│       │   ├── PremiumUsage.swift
-│       │   ├── ModelUsage.swift
-│       │   └── CursorMetrics.swift
-│       ├── Services/
-│       │   ├── CursorTokenProvider.swift
-│       │   ├── CursorAPI.swift
-│       │   └── MetricsRepository.swift
-│       ├── Views/
-│       │   └── MenuBarView.swift
-│       └── CursorStatsApp.swift
-├── Tests/
-│   └── CursorMenuBarAppTests/
-│       ├── CursorTokenProviderTests.swift
-│       └── MetricsRepositoryTests.swift
-└── Package.swift
-```
+Configure directly in the app menu (30s, 1min, 5min, 10min).
 
-## Tests
+## Testing
 
 Run tests with:
-
 ```bash
 cd CursorMenuBarApp
 swift test
 ```
 
-Or in Xcode:
-- Press `Cmd+U` to run all tests
+Or in Xcode: Press `Cmd+U`
 
-## Development
-
-### Adding New Metrics
-
-To add new metrics:
-
-1. Add fields to the `CursorMetrics` model in `Models/CursorMetrics.swift`
-2. Update `MetricsRepository` to fetch the new data
-3. Update `MenuBarView` to display the new information
-
-### Debugging
-
-To see debug logs, add `print()` statements in the services. The application prints:
-- Database read errors
-- HTTP request errors
-- Loading status
+**What to verify:**
+- ✅ Menu bar icon appears
+- ✅ Menu opens and displays data
+- ✅ Token is read from database
+- ✅ API calls succeed
+- ✅ Auto-refresh works
 
 ## Troubleshooting
 
-### Token Not Found
-
-If you receive the error "Cursor token not found":
-1. Make sure you are logged into Cursor
-2. Verify that the `state.vscdb` file exists in the default path
-3. Try configuring a custom path if necessary
+### "Cursor token not found"
+- Ensure you're logged into Cursor
+- Verify database exists: `ls ~/Library/Application\ Support/Cursor/User/globalStorage/state.vscdb`
+- Restart the app after logging into Cursor
 
 ### Error 401 (Unauthorized)
-
-If you receive error 401:
-- The token may have expired
-- Log out and log back into Cursor
-- The application will try to fetch a new token automatically
+- Token expired: Log out and back into Cursor, then restart the app
 
 ### Error 403 (Forbidden)
+- Check internet connection
+- May be a network/firewall restriction
 
-403 errors can occur due to:
-- CORS issues (the application simulates browser headers to avoid this)
-- Network/firewall restrictions
+### Build Errors
+- Update Xcode: `xcode-select --install`
+- Clean build: `swift package clean && swift package resolve`
 
-## 🚀 For Developers
+### App doesn't appear in menu bar
+- Check if running: `ps aux | grep CursorMenuBarApp`
+- Verify macOS permissions in System Settings
 
-### Creating a Release
+## 🚀 Creating a Release
 
-1. Update the version in:
-   - `Scripts/package_app.sh`
-   - `Scripts/sign_and_notarize.sh`
-   - `CHANGELOG.md` (in root)
+1. **Update version** in `Scripts/package_app.sh` and `CHANGELOG.md`
 
-2. Run tests:
+2. **Run tests:**
    ```bash
    cd CursorMenuBarApp
    swift test
-   swiftlint
    ```
 
-3. Create the app bundle:
+3. **Create app bundle:**
    ```bash
    ./Scripts/package_app.sh 0.1.0 release
+   zip -r CursorMenuBarApp-0.1.0.zip CursorMenuBarApp/CursorMenuBarApp.app
    ```
 
-4. (Optional) Sign and notarize:
+4. **(Optional) Sign and notarize:**
    ```bash
    export APP_STORE_CONNECT_API_KEY_P8="..."
    export APP_STORE_CONNECT_KEY_ID="..."
@@ -226,9 +171,19 @@ If you receive error 401:
    ./Scripts/sign_and_notarize.sh 0.1.0
    ```
 
-5. Create a GitHub Release:
-   - Upload the `.zip` file
-   - Add release notes from `CHANGELOG.md`
+5. **Upload to GitHub Releases**
+
+## Development
+
+### Adding New Metrics
+
+1. Add fields to `Models/CursorMetrics.swift`
+2. Update `Services/MetricsRepository.swift` to fetch data
+3. Update `Views/MenuBarView.swift` to display information
+
+### Dependencies
+
+- **GRDB.swift** (6.0.0+): SQLite database access
 
 ## 📝 License
 
@@ -236,7 +191,6 @@ This project is provided as-is, without warranties.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
 1. Fork the project
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
@@ -245,7 +199,7 @@ Contributions are welcome! Please:
 
 ## 🙏 Acknowledgments
 
-Inspired by projects:
+Inspired by:
 - [cursor-stats](https://github.com/Dwtexe/cursor-stats) by Dwtexe
 - [cursor-stats-lite](https://github.com/darzhang/cursor-stats-lite) by darzhang
 - [CodexBar](https://github.com/steipete/CodexBar) by steipete
