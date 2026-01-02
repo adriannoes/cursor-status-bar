@@ -68,7 +68,7 @@ struct MenuBarView: View {
         HStack {
             Spacer()
             ProgressView()
-            Text("Carregando...")
+            Text("Loading...")
                 .foregroundColor(.secondary)
             Spacer()
         }
@@ -80,7 +80,7 @@ struct MenuBarView: View {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.orange)
-                Text("Erro")
+                Text("Error")
                     .font(.headline)
             }
             
@@ -94,7 +94,7 @@ struct MenuBarView: View {
     
     private var emptyView: some View {
         VStack {
-            Text("Nenhum dado disponível")
+            Text("No data available")
                 .foregroundColor(.secondary)
         }
         .padding()
@@ -123,7 +123,7 @@ struct MenuBarView: View {
     
     private func premiumUsageSection(_ usage: PremiumUsage) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Requisições Premium")
+            Text("Premium Requests")
                 .font(.headline)
             
             HStack {
@@ -158,12 +158,12 @@ struct MenuBarView: View {
     
     private func subscriptionSection(_ metrics: CursorMetrics) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Plano de Assinatura")
+            Text("Subscription Plan")
                 .font(.headline)
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text("Incluídas no plano:")
+                    Text("Included in plan:")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -173,7 +173,7 @@ struct MenuBarView: View {
                 }
                 
                 HStack {
-                    Text("Restantes:")
+                    Text("Remaining:")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -187,7 +187,7 @@ struct MenuBarView: View {
                 formatter.timeStyle = .none
                 
                 HStack {
-                    Text("Ciclo:")
+                    Text("Cycle:")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -200,11 +200,11 @@ struct MenuBarView: View {
     
     private func modelDistributionSection(_ models: [ModelUsage]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Modelos Mais Usados")
+            Text("Most Used Models")
                 .font(.headline)
             
             if models.isEmpty {
-                Text("Nenhum modelo usado ainda")
+                Text("No models used yet")
                     .font(.caption)
                     .foregroundColor(.secondary)
             } else {
@@ -253,7 +253,7 @@ struct MenuBarView: View {
     private var footerView: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Atualizar a cada:")
+                Text("Refresh every:")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
@@ -273,7 +273,7 @@ struct MenuBarView: View {
             }
             
             HStack {
-                Text("Última atualização:")
+                Text("Last updated:")
                     .font(.caption2)
                     .foregroundColor(.secondary)
                 Spacer()

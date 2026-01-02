@@ -17,28 +17,28 @@ cursor-status-bar/              # Repository root
 │
 └── CursorMenuBarApp/            # Swift Package
     ├── Package.swift            # Swift Package configuration
-    │
-    ├── Sources/
+│
+├── Sources/
     │   └── CursorMenuBarApp/    # Main source code
     │       ├── CursorStatsApp.swift   # Application entry point
-    │       │
+│       │
     │       ├── Models/          # Data models
     │       │   ├── PremiumUsage.swift      # Premium usage model
     │       │   ├── ModelUsage.swift        # Model usage by AI model
     │       │   └── CursorMetrics.swift     # Aggregation of all metrics
-    │       │
+│       │
     │       ├── Services/        # Services and business logic
     │       │   ├── CursorTokenProvider.swift  # SQLite token reading
     │       │   ├── CursorAPI.swift           # Cursor API communication
     │       │   └── MetricsRepository.swift   # Metrics repository
-    │       │
+│       │
     │       └── Views/           # User interface
     │           └── MenuBarView.swift  # Main menu bar view
-    │
-    └── Tests/
+│
+└── Tests/
         └── CursorMenuBarAppTests/     # Unit tests
-            ├── CursorTokenProviderTests.swift
-            └── MetricsRepositoryTests.swift
+        ├── CursorTokenProviderTests.swift
+        └── MetricsRepositoryTests.swift
 ```
 
 ## Component Description

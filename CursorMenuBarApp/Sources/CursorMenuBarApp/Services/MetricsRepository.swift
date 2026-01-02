@@ -21,7 +21,7 @@ class MetricsRepository: ObservableObject {
         do {
             guard let token = try tokenProvider.getToken() else {
                 await MainActor.run {
-                    errorMessage = "Token do Cursor não encontrado. Certifique-se de estar logado no Cursor."
+                    errorMessage = "Cursor token not found. Make sure you are logged into Cursor."
                     isLoading = false
                 }
                 return

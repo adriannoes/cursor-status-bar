@@ -136,13 +136,13 @@ enum CursorAPIError: Error {
     var localizedDescription: String {
         switch self {
         case .invalidResponse:
-            return "Resposta inválida da API"
+            return "Invalid API response"
         case .unauthorized:
-            return "Token inválido ou expirado"
+            return "Invalid or expired token"
         case .httpError(let code):
-            return "Erro HTTP: \(code)"
+            return "HTTP error: \(code)"
         case .decodingError:
-            return "Erro ao decodificar resposta"
+            return "Error decoding response"
         }
     }
 }
