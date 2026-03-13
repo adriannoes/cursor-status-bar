@@ -1,5 +1,6 @@
 import XCTest
 @testable import CursorMenuBarApp
+import CursorShared
 
 final class MetricsRepositoryTests: XCTestCase {
     var repository: MetricsRepository!

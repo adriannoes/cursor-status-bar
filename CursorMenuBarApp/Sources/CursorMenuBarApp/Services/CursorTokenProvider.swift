@@ -1,7 +1,8 @@
 import Foundation
 import GRDB
+import CursorShared
 
-class CursorTokenProvider {
+class CursorTokenProvider: TokenProviding {
     static let shared = CursorTokenProvider()
     
     private var cachedToken: String?
@@ -50,9 +51,11 @@ class CursorTokenProvider {
         }
         
         do {
-            let dbQueue = try DatabaseQueue(path: dbPath, readonly: true)
-            
-            return try dbQueue.read { db in
+            var config = Configuration()
+            config.readonly = true
+            let dbQueue = try DatabaseQueue(path: dbPath, configuration: config)
+
+            return try dbQueue.read { db -> String? in
                 // Search for token in ItemTable
                 let sql = """
                     SELECT value FROM ItemTable 

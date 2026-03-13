@@ -1,6 +1,21 @@
 import SwiftUI
+import CursorShared
 
 struct MenuBarView: View {
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .short
+        f.timeStyle = .none
+        return f
+    }()
+
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .none
+        f.timeStyle = .short
+        return f
+    }()
+
     @StateObject private var repository = MetricsRepository.shared
     @State private var refreshInterval: TimeInterval = 60
     @State private var refreshTimer: Timer?
@@ -181,17 +196,13 @@ struct MenuBarView: View {
                         .font(.caption)
                         .fontWeight(.medium)
                 }
-                
-                let formatter = DateFormatter()
-                formatter.dateStyle = .short
-                formatter.timeStyle = .none
-                
+
                 HStack {
                     Text("Cycle:")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text("\(formatter.string(from: metrics.billingCycleStart)) - \(formatter.string(from: metrics.billingCycleEnd))")
+                    Text("\(Self.dateFormatter.string(from: metrics.billingCycleStart)) - \(Self.dateFormatter.string(from: metrics.billingCycleEnd))")
                         .font(.caption)
                 }
             }
@@ -277,10 +288,7 @@ struct MenuBarView: View {
                     .font(.caption2)
                     .foregroundColor(.secondary)
                 Spacer()
-                let formatter = DateFormatter()
-                formatter.timeStyle = .short
-                formatter.dateStyle = .none
-                Text(formatter.string(from: Date()))
+                Text(Self.timeFormatter.string(from: Date()))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
