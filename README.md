@@ -2,9 +2,6 @@
 
 A native macOS application that displays Cursor usage statistics directly in the system menu bar.
 
-**Author:** [Adrianno Esnarriaga](https://github.com/adriannoes)  
-**Repository:** [cursor-status-bar](https://github.com/adriannoes/cursor-status-bar)
-
 ## Features
 
 - 📊 **Real-time monitoring** of Cursor premium requests
@@ -76,24 +73,24 @@ sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 ## Project Structure
 
 ```
-cursor-status-bar/
-├── CursorMenuBarApp/          # Swift Package
-│   ├── Sources/
-│   │   └── CursorMenuBarApp/
-│   │       ├── Models/        # Data models (PremiumUsage, ModelUsage, CursorMetrics)
-│   │       ├── Services/      # TokenProvider, API client, MetricsRepository
-│   │       ├── Views/         # MenuBarView (SwiftUI)
-│   │       └── CursorStatsApp.swift
-│   ├── Tests/                 # Unit tests
+cursor-stats/
+├── CursorShared/              # Swift Package (models, API, MetricsRepository)
+├── CursorMenuBarApp/          # macOS menu bar app
+│   ├── Sources/CursorMenuBarApp/
+│   │   ├── Services/          # CursorTokenProvider (SQLite)
+│   │   └── Views/             # MenuBarView (SwiftUI)
 │   └── Package.swift
+├── CursorStats/               # iOS app (Xcode project)
+│   ├── CursorStats/           # App, Features, Core, Resources
+│   └── CursorStats.xcodeproj
+├── docs/                      # ROADMAP, workflow docs
 └── Scripts/                   # Build and distribution scripts
 ```
 
 **Key Components:**
-- `CursorTokenProvider`: Reads token from SQLite database
-- `CursorAPI`: HTTP client for Cursor API endpoints
-- `MetricsRepository`: Aggregates and manages metrics
-- `MenuBarView`: SwiftUI interface
+- `CursorShared`: Models, CursorAPI, MetricsRepository, TokenProviding protocol
+- `CursorTokenProvider` (macOS): Reads token from SQLite database
+- `MenuBarView`: SwiftUI interface (macOS)
 
 ## Configuration
 
@@ -125,54 +122,6 @@ Or in Xcode: Press `Cmd+U`
 - ✅ API calls succeed
 - ✅ Auto-refresh works
 
-## Troubleshooting
-
-### "Cursor token not found"
-- Ensure you're logged into Cursor
-- Verify database exists: `ls ~/Library/Application\ Support/Cursor/User/globalStorage/state.vscdb`
-- Restart the app after logging into Cursor
-
-### Error 401 (Unauthorized)
-- Token expired: Log out and back into Cursor, then restart the app
-
-### Error 403 (Forbidden)
-- Check internet connection
-- May be a network/firewall restriction
-
-### Build Errors
-- Update Xcode: `xcode-select --install`
-- Clean build: `swift package clean && swift package resolve`
-
-### App doesn't appear in menu bar
-- Check if running: `ps aux | grep CursorMenuBarApp`
-- Verify macOS permissions in System Settings
-
-## 🚀 Creating a Release
-
-1. **Update version** in `Scripts/package_app.sh` and `CHANGELOG.md`
-
-2. **Run tests:**
-   ```bash
-   cd CursorMenuBarApp
-   swift test
-   ```
-
-3. **Create app bundle:**
-   ```bash
-   ./Scripts/package_app.sh 0.1.0 release
-   zip -r CursorMenuBarApp-0.1.0.zip CursorMenuBarApp/CursorMenuBarApp.app
-   ```
-
-4. **(Optional) Sign and notarize:**
-   ```bash
-   export APP_STORE_CONNECT_API_KEY_P8="..."
-   export APP_STORE_CONNECT_KEY_ID="..."
-   export APP_STORE_CONNECT_ISSUER_ID="..."
-   ./Scripts/sign_and_notarize.sh 0.1.0
-   ```
-
-5. **Upload to GitHub Releases**
-
 ## Development
 
 ### Adding New Metrics
@@ -189,24 +138,9 @@ Or in Xcode: Press `Cmd+U`
 
 This project is provided as-is, without warranties.
 
-## 🤝 Contributing
-
-1. Fork the project
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ## 🙏 Acknowledgments
 
 Inspired by:
 - [cursor-stats](https://github.com/Dwtexe/cursor-stats) by Dwtexe
 - [cursor-stats-lite](https://github.com/darzhang/cursor-stats-lite) by darzhang
 - [CodexBar](https://github.com/steipete/CodexBar) by steipete
-
-## 👤 Author
-
-**Adrianno Esnarriaga**
-
-- GitHub: [@adriannoes](https://github.com/adriannoes)
-- Repository: [cursor-status-bar](https://github.com/adriannoes/cursor-status-bar)
